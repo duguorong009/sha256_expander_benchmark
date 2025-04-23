@@ -5,3 +5,6 @@ edition = "2024"
 
 [dependencies]
 expander_compiler = { git = "https://github.com/PolyhedraZK/ExpanderCompilerCollection" }
+circuit-std-rs = { git = "https://github.com/PolyhedraZK/ExpanderCompilerCollection" }
+rand = "0.9.1"
+sha2 = "0.10.8"
