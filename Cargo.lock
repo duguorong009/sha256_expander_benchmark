@@ -2297,7 +2297,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sha256-expander-v1"
+name = "sha256_expander_benchmark"
 version = "0.1.0"
 dependencies = [
  "circuit-std-rs",
