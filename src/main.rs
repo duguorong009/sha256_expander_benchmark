@@ -4,7 +4,7 @@ use rand::RngCore;
 use sha2::{Digest, Sha256};
 
 // ref: https://github.com/PolyhedraZK/ExpanderCompilerCollection/blob/master/circuit-std-rs/tests/sha256_gf2.rs#L89-L137
-const INPUT_LEN: usize = 11 * 8; // input size in bits, must be a multiple of 8
+const INPUT_LEN: usize = 2048 * 8; // input size in bits, must be a multiple of 8
 const OUTPUT_LEN: usize = 256; // FIXED 256
 
 declare_circuit!(SHA256Circuit {
