@@ -9,7 +9,7 @@ const OUTPUT_LEN: usize = 256; // FIXED 256
 
 declare_circuit!(SHA256Circuit {
     input: [Variable; INPUT_LEN],
-    output: [Variable; OUTPUT_LEN],
+    output: [PublicVariable; OUTPUT_LEN],
 });
 
 impl Define<GF2Config> for SHA256Circuit<Variable> {
