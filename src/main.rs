@@ -1,10 +1,11 @@
 use circuit_std_rs::sha256::gf2::SHA256GF2;
 use expander_compiler::frontend::*;
 use rand::RngCore;
+use serdes::ExpSerde;
 use sha2::{Digest, Sha256};
 
 // ref: https://github.com/PolyhedraZK/ExpanderCompilerCollection/blob/master/circuit-std-rs/tests/sha256_gf2.rs#L89-L137
-const INPUT_LEN: usize = 2048 * 8; // input size in bits, must be a multiple of 8
+const INPUT_LEN: usize = 10 * 8; // input size in bits, must be a multiple of 8
 const OUTPUT_LEN: usize = 256; // FIXED 256
 
 declare_circuit!(SHA256Circuit {
@@ -30,10 +31,10 @@ fn main() {
     let mut hash = Sha256::new();
     hash.update(data);
     let output = hash.finalize();
-    
+
     // compile the circuit
-    let compile_result =
-        compile_cross_layer(&SHA256Circuit::default(), CompileOptions::default()).unwrap();
+    let compile_result = compile(&SHA256Circuit::default(), CompileOptions::default()).unwrap();
+    // compile_cross_layer(&SHA256Circuit::default(), CompileOptions::default()).unwrap();
 
     // prepare assignment
     let mut assignment = SHA256Circuit::default();
@@ -57,4 +58,17 @@ fn main() {
     // run/verify the circuit
     let output = compile_result.layered_circuit.run(&witness);
     assert_eq!(output, vec![true]);
+
+    // create "circuit.txt"
+    let file = std::fs::File::create("circuit.txt").unwrap();
+    let writer = std::io::BufWriter::new(file);
+    compile_result
+        .layered_circuit
+        .serialize_into(writer)
+        .unwrap();
+
+    // create "witness.txt"
+    let file = std::fs::File::create("witness.txt").unwrap();
+    let writer = std::io::BufWriter::new(file);
+    witness.serialize_into(writer).unwrap();
 }

@@ -2303,6 +2303,7 @@ dependencies = [
  "circuit-std-rs",
  "expander_compiler",
  "rand 0.9.1",
+ "serdes",
  "sha2",
 ]
 
