@@ -60,7 +60,7 @@ fn main() {
     assert_eq!(output, vec![true]);
 
     // create "circuit.txt"
-    let file = std::fs::File::create("circuit.txt").unwrap();
+    let file = std::fs::File::create("build/circuit.txt").unwrap();
     let writer = std::io::BufWriter::new(file);
     compile_result
         .layered_circuit
@@ -68,7 +68,7 @@ fn main() {
         .unwrap();
 
     // create "witness.txt"
-    let file = std::fs::File::create("witness.txt").unwrap();
+    let file = std::fs::File::create("build/witness.txt").unwrap();
     let writer = std::io::BufWriter::new(file);
     witness.serialize_into(writer).unwrap();
 }
