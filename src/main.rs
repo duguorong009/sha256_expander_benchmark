@@ -34,7 +34,6 @@ fn main() {
 
     // compile the circuit
     let compile_result = compile(&SHA256Circuit::default(), CompileOptions::default()).unwrap();
-    // compile_cross_layer(&SHA256Circuit::default(), CompileOptions::default()).unwrap();
 
     // prepare assignment
     let mut assignment = SHA256Circuit::default();
