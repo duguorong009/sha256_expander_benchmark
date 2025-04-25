@@ -2301,10 +2301,16 @@ name = "sha256_expander_benchmark"
 version = "0.1.0"
 dependencies = [
  "circuit-std-rs",
+ "crosslayer_prototype",
  "expander_compiler",
+ "gf2",
+ "gkr",
+ "gkr_engine",
+ "gkr_hashers",
  "rand 0.9.1",
  "serdes",
  "sha2",
+ "transcript",
 ]
 
 [[package]]
