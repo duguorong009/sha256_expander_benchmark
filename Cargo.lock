@@ -2300,8 +2300,10 @@ dependencies = [
 name = "sha256_expander_benchmark"
 version = "0.1.0"
 dependencies = [
+ "arith",
  "circuit-std-rs",
  "expander_compiler",
+ "gf2",
  "rand 0.9.1",
  "serdes",
  "sha2",
