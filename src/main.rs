@@ -61,6 +61,7 @@ fn main() {
     let output = compile_result.layered_circuit.run(&witness);
     assert_eq!(output, vec![true]);
 
+    // ref: https://github.com/PolyhedraZK/ExpanderCompilerCollection/blob/master/expander_compiler/tests/keccak_gf2_full_crosslayer.rs#L274-L306
     let expander_circuit = compile_result.layered_circuit
         .export_to_expander::<gkr_engine::GF2ExtConfig>()
         .flatten();
