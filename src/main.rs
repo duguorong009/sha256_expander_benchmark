@@ -1,3 +1,4 @@
+use arith::SimdField;
 use circuit_std_rs::sha256::gf2::SHA256GF2;
 use expander_compiler::frontend::*;
 use expander_transcript::BytesHashTranscript;
@@ -26,6 +27,7 @@ impl Define<GF2Config> for SHA256Circuit<Variable> {
 
 fn main() {
     assert!(INPUT_LEN % 8 == 0);
+    let n_witnesses = SIMDField::<GF2Config>::PACK_SIZE;
 
     // prepare data
     let mut rng = rand::rng();
@@ -51,15 +53,18 @@ fn main() {
         }
     }
 
+    let assignments = vec![assignment; n_witnesses];
     // solve witness
     let witness = compile_result
         .witness_solver
-        .solve_witness(&assignment)
+        .solve_witnesses(&assignments)
         .unwrap();
 
     // run/verify the circuit
     let output = compile_result.layered_circuit.run(&witness);
-    assert_eq!(output, vec![true]);
+    for x in output.iter() {
+        assert!(*x);
+    }
 
     // ref: https://github.com/PolyhedraZK/ExpanderCompilerCollection/blob/master/expander_compiler/tests/keccak_gf2_full_crosslayer.rs#L274-L306
     let expander_circuit = compile_result.layered_circuit
