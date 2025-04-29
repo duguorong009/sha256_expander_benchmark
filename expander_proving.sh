@@ -44,7 +44,8 @@ fi
 
 # Step 1: Compile the circuit & get artifacts
 echo "Step 1: Compiling the circuit..."
-cargo r --release
+COMPILE_MEM=$(measure_memory cargo r --release)
+echo "Compilation memory usage: $(bytes_to_human $COMPILE_MEM)"
 
 # Step 2: Clone the Expander repository if it doesn't exist
 if [ ! -d "$EXPANDER_DIR" ]; then
