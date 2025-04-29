@@ -57,20 +57,28 @@ fi
 
 # Step 3: Run the Expander prover
 echo "Step 3: Running the Expander prover..."
-cd $EXPANDER_DIR
-RUSTFLAGS="-C target-cpu=native" cargo run --bin expander-exec --release -- \
+
+EXPANDER_EXEC_BIN="$EXPANDER_DIR/target/release/expander-exec"
+if [ ! -f "$EXPANDER_EXEC_BIN" ]; then
+  echo "Building expander-exec ..."
+  cd $PROVER_DIR
+  RUSTFLAGS="-C target-cpu=native" cargo build --release
+  cd -
+else
+  echo "expander-exec binary already exists. Skipping build."
+fi
+
+"$EXPANDER_EXEC_BIN" \
     -p Orion prove \
-    -c ../$CIRCUIT_FILE \
-    -w ../$WITNESS_FILE \
-    -o ../$PROOF_FILE
-cd - 
+    -c $CIRCUIT_FILE \
+    -w $WITNESS_FILE \
+    -o $PROOF_FILE
+
 
 # Step 4: Run the Expander verifier
 echo "Step 4: Running the Expander verifier..."
-cd $EXPANDER_DIR
-RUSTFLAGS="-C target-cpu=native" cargo run --bin expander-exec --release -- \
+"$EXPANDER_EXEC_BIN" \
     -p Orion verify \
-    -c ../$CIRCUIT_FILE \
-    -w ../$WITNESS_FILE \
-    -i ../$PROOF_FILE
-cd -
+    -c $CIRCUIT_FILE \
+    -w $WITNESS_FILE \
+    -i $PROOF_FILE
