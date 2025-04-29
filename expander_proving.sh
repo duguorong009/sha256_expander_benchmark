@@ -68,17 +68,62 @@ else
   echo "expander-exec binary already exists. Skipping build."
 fi
 
-"$EXPANDER_EXEC_BIN" \
+PROVE_START_TIME=$(date +%s)
+/usr/bin/time -l "$EXPANDER_EXEC_BIN" \
     -p Orion prove \
     -c $CIRCUIT_FILE \
     -w $WITNESS_FILE \
-    -o $PROOF_FILE
+    -o $PROOF_FILE 2> prove_metrics.txt
+PROVE_END_TIME=$(date +%s)
 
+# Calculate proof generation time
+PROVE_TIME=$((PROVE_END_TIME - PROVE_START_TIME))
+echo "Proof generation time: $PROVE_TIME seconds"
+
+# Extract memory usage during proof generation
+PROVE_MEM=$(awk '/maximum resident set size/ {print $1}' prove_metrics.txt)
+echo "Proof generation memory usage: $(bytes_to_human $PROVE_MEM)"
 
 # Step 4: Run the Expander verifier
 echo "Step 4: Running the Expander verifier..."
-"$EXPANDER_EXEC_BIN" \
+VERIFY_START_TIME=$(date +%s%N)
+/usr/bin/time -l "$EXPANDER_EXEC_BIN" \
     -p Orion verify \
     -c $CIRCUIT_FILE \
     -w $WITNESS_FILE \
     -i $PROOF_FILE
+VERIFY_END_TIME=$(date +%s%N)
+
+# Calculate proof verification time
+VERIFY_TIME_NS=$((VERIFY_END_TIME - VERIFY_START_TIME))
+VERIFY_TIME_MS=$((VERIFY_TIME_NS / 1000000))
+echo "Proof verification time: $VERIFY_TIME_MS milliseconds"
+
+
+# Step 5: Output performance metrics
+echo "=== Performance Metrics ==="
+
+# Proof size
+PROOF_SIZE=$(stat -f%z $PROOF_FILE)
+echo "Proof size: $PROOF_SIZE bytes"
+
+# Total size of data needed for proof generation
+DATA_SIZE=$(du -ck $CIRCUIT_FILE $WITNESS_FILE | grep total | awk '{print $1}')
+echo "Total data size for proof generation: $DATA_SIZE KB"
+
+# Extract Peak Memory Footprint (in bytes)
+PEAK_MEM_BYTES=$(awk '/peak memory footprint/ {print $1}' prove_metrics.txt)
+
+# Convert and display the memory metrics
+echo "Peak Memory Footprint: $(bytes_to_human $PEAK_MEM_BYTES)"
+
+# Summary
+echo "--- Summary ---"
+echo "Circuit compilation memory usage: $(bytes_to_human $COMPILE_MEM)"
+echo "Total data size for proof generation: $DATA_SIZE KB"
+
+echo "Expander proof generation memory usage: $(bytes_to_human $PROVE_MEM)"
+echo "Expander proof size: $(bytes_to_human $PROOF_SIZE)"
+
+echo "Expander proof generation time: $PROVE_TIME seconds"
+echo "Expander proof verification time: $VERIFY_TIME_MS milliseconds"
