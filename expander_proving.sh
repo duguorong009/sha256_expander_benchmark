@@ -12,6 +12,30 @@ WITNESS_FILE="build/witness.txt"
 PROOF_FILE="build/proof.bin"
 
 
+# Function to convert bytes to human-readable format
+bytes_to_human() {
+  local bytes=$1
+  local kib=$((1024))
+  local mib=$((1024 * kib))
+  local gib=$((1024 * mib))
+
+  if (( bytes >= gib )); then
+    printf "%.2f GiB" "$(echo "$bytes / $gib" | bc -l)"
+  elif (( bytes >= mib )); then
+    printf "%.2f MiB" "$(echo "$bytes / $mib" | bc -l)"
+  elif (( bytes >= kib )); then
+    printf "%.2f KiB" "$(echo "$bytes / $kib" | bc -l)"
+  else
+    printf "%d B" "$bytes"
+  fi
+}
+
+# Function to measure memory usage of a command
+measure_memory() {
+  /usr/bin/time -l "$@" 2>&1 | awk '/maximum resident set size/ {print $1}'
+}
+
+
 # Create "build" directory
 if [ ! -d "$BUILD_DIR" ]; then
   echo "Creating build directory..."
