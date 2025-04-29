@@ -12,3 +12,6 @@ cd sha256_expander_benchmark
 chmod +x ./expander_proving.sh
 ./expander_proving.sh
 ```
+
+### NOTE
+1. Current sh scripts show correct performance metrics in only MacOS, not in ubuntu/linux.(Reason: `/usr/bin/time` util)
