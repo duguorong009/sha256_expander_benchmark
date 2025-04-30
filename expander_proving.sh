@@ -62,8 +62,8 @@ echo "Step 3: Running the Expander prover..."
 EXPANDER_EXEC_BIN="$EXPANDER_DIR/target/release/expander-exec"
 if [ ! -f "$EXPANDER_EXEC_BIN" ]; then
   echo "Building expander-exec ..."
-  cd $EXPANDER_DIR
-  RUSTFLAGS="-C target-cpu=native" cargo build --release -vv
+  cd $PROVER_DIR
+  RUSTFLAGS="-C target-cpu=native" cargo build --release
   cd -
 else
   echo "expander-exec binary already exists. Skipping build."
