@@ -6,7 +6,7 @@ use serdes::ExpSerde;
 use sha2::{Digest, Sha256};
 
 // ref: https://github.com/PolyhedraZK/ExpanderCompilerCollection/blob/master/circuit-std-rs/tests/sha256_gf2.rs#L89-L137
-const INPUT_LEN: usize = 10 * 8; // input size in bits, must be a multiple of 8
+const INPUT_LEN: usize = 1024 * 8; // input size in bits, must be a multiple of 8
 const OUTPUT_LEN: usize = 256; // FIXED 256
 
 declare_circuit!(SHA256Circuit {
@@ -50,7 +50,9 @@ fn main() {
         }
     }
 
-    let assignments = vec![assignment; n_witnesses];
+    let mut assignments: Vec<SHA256Circuit<GF2>> = vec![SHA256Circuit::default(); n_witnesses];
+    assignments[0] = assignment;
+
     // solve witness
     let witness = compile_result
         .witness_solver
@@ -59,9 +61,7 @@ fn main() {
 
     // run/verify the circuit
     let output = compile_result.layered_circuit.run(&witness);
-    for x in output.iter() {
-        assert!(*x);
-    }
+    assert!(output[0]);
 
     // create "circuit.txt"
     let file = std::fs::File::create("build/circuit.txt").unwrap();
