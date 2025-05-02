@@ -110,7 +110,7 @@ echo "Proof size: $PROOF_SIZE bytes"
 
 # Total size of data needed for proof generation
 DATA_SIZE=$(du -ck $CIRCUIT_FILE $WITNESS_FILE | grep total | awk '{print $1}')
-echo "Total data size for proof generation: $DATA_SIZE KB"
+echo "Total data size for proof generation: $(bytes_to_human $DATA_SIZE)"
 
 # Extract Peak Memory Footprint (in bytes)
 PEAK_MEM_BYTES=$(awk '/peak memory footprint/ {print $1}' prove_metrics.txt)
@@ -121,7 +121,7 @@ echo "Peak Memory Footprint: $(bytes_to_human $PEAK_MEM_BYTES)"
 # Summary
 echo "--- Summary ---"
 echo "Circuit compilation memory usage: $(bytes_to_human $COMPILE_MEM)"
-echo "Total data size for proof generation: $DATA_SIZE KB"
+echo "Total data size for proof generation: $(bytes_to_human $DATA_SIZE)"
 
 echo "Expander proof generation memory usage: $(bytes_to_human $PROVE_MEM)"
 echo "Expander proof size: $(bytes_to_human $PROOF_SIZE)"
