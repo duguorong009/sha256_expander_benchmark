@@ -52,6 +52,7 @@ if [ ! -d "$EXPANDER_DIR" ]; then
   echo "Step 2: Cloning the Expander repository..."
   git clone $EXPANDER_REPO
   cd $EXPANDER_DIR
+  git checkout 827fb08
   cargo run --bin=dev-setup --release
   cd -
 fi
