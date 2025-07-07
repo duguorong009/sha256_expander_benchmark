@@ -4,14 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-expander_compiler = { git = "https://github.com/PolyhedraZK/ExpanderCompilerCollection", rev="4ae6f3764c49e0224c82ff1c1a4256ecc2aaf09e" }
-# expander-rs = { git = "https://github.com/PolyhedraZK/Expander", rev="9c00ff9ca9cb2523882828c5e40fece46fbb0d75" }
-arith = { git = "https://github.com/PolyhedraZK/Expander", rev="9c00ff9ca9cb2523882828c5e40fece46fbb0d75" }
-
-# circuit-std-rs = { git = "https://github.com/PolyhedraZK/ExpanderCompilerCollection", rev="4ae6f3764c49e0224c82ff1c1a4256ecc2aaf09e" }
-# gf2 = { git = "https://github.com/PolyhedraZK/Expander", branch = "main" }
-# arith = { git = "https://github.com/PolyhedraZK/Expander", branch = "main" }
-# serdes = { git = "https://github.com/PolyhedraZK/Expander", branch = "main"}
+expander_compiler = { git = "https://github.com/PolyhedraZK/ExpanderCompilerCollection", tag = "v1.2.0" }
+circuit-std-rs = { git = "https://github.com/PolyhedraZK/ExpanderCompilerCollection", tag = "v1.2.0" }
+serdes = { git = "https://github.com/PolyhedraZK/Expander", branch = "main"}
 
 rand = "0.9.1"
 sha2 = "0.10.8"
