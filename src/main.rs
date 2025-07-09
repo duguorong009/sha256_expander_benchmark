@@ -8,18 +8,20 @@ use sha2::{Digest, Sha256};
 // ref: https://github.com/PolyhedraZK/ExpanderCompilerCollection/blob/master/circuit-std-rs/tests/sha256_gf2.rs#L89-L137
 const INPUT_LEN: usize = 64 * 8; // input size in bits, must be a multiple of 8
 const OUTPUT_LEN: usize = 256; // FIXED 256
-const N_HASHES: usize = 1;
+const N_HASHES: usize = 32;
 
 declare_circuit!(SHA256Circuit {
-    input: [Variable; 64 * 8],
-    output: [Variable; 256], // TODO: use public inputs
+    input: [[Variable; INPUT_LEN]; N_HASHES],
+    output: [[Variable; OUTPUT_LEN]; N_HASHES], // TODO: use public inputs
 });
 
 impl Define<GF2Config> for SHA256Circuit<Variable> {
     fn define(&self, api: &mut API<GF2Config>) {
-        let out = compute_sha256(api, &self.input.to_vec());
-        for i in 0..256 {
-            api.assert_is_equal(out[i].clone(), self.output[i].clone());
+        for j in 0..N_HASHES {
+            let out = compute_sha256(api, &self.input[j].to_vec());
+            for i in 0..256 {
+                api.assert_is_equal(out[i].clone(), self.output[j][i].clone());
+            }
         }
     }
 }
@@ -279,27 +281,36 @@ fn main() {
 
     // prepare data
     let mut rng = rand::rng();
-    let data = [rng.next_u32() as u8; INPUT_LEN / 8];
-    let mut hash = Sha256::new();
-    hash.update(data);
-    let output = hash.finalize();
+    let mut inputs = vec![];
+    let mut outputs = vec![];
+
+    for _ in 0..N_HASHES {
+        let data = [rng.next_u32() as u8; INPUT_LEN / 8];
+        let mut hash = Sha256::new();
+        hash.update(data);
+        let output = hash.finalize();
+        inputs.push(data);
+        outputs.push(output);
+    }
 
     // compile the circuit
     let compile_result = compile(&SHA256Circuit::default(), CompileOptions::default()).unwrap();
 
     // prepare assignment
     let mut assignment = SHA256Circuit::default();
-    for i in 0..INPUT_LEN / 8 {
-        for j in 0..8 {
-            assignment.input[i * 8 + j] = (((data[i] >> (7 - j)) & 1) as u32).into();
+    for k in 0..N_HASHES {
+        for i in 0..INPUT_LEN / 8 {
+            for j in 0..8 {
+                assignment.input[k][i * 8 + j] = (((inputs[k][i] >> (7 - j)) & 1) as u32).into();
+            }
+        }
+        for i in 0..OUTPUT_LEN / 8 {
+            for j in 0..8 {
+                assignment.output[k][i * 8 + j] = (((outputs[k][i] >> (7 - j) as u32) & 1) as u32).into();
+            }
         }
     }
-    for i in 0..OUTPUT_LEN / 8 {
-        for j in 0..8 {
-            assignment.output[i * 8 + j] = (((output[i] >> (7 - j) as u32) & 1) as u32).into();
-        }
-    }
-
+    
     let mut assignments: Vec<SHA256Circuit<GF2>> = vec![SHA256Circuit::default(); n_witnesses];
     assignments[0] = assignment;
 
