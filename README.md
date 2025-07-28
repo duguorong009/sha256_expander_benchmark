@@ -1,4 +1,4 @@
-# SHA256 hash benchmark using Polyhedra Expander
+# SHA256 hash benchmark using [Polyhedra Expander](https://github.com/PolyhedraZK/Expander)
 
 ## How to run
 1. Clone the repo
